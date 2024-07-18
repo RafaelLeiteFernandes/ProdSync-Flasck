@@ -12,9 +12,12 @@ def generate_solicitation_pdf(solicitation_data):
 
     # Cabeçalho
     logo_path = "reports/static/logo.png"  # Caminho para o logo
-    logo = Image(logo_path, width=50, height=50)
-    elements.append(logo)
-    elements.append(Spacer(1, 12))
+    try:
+        logo = Image(logo_path, width=50, height=50)
+        elements.append(logo)
+        elements.append(Spacer(1, 12))
+    except IOError:
+        print(f"Warning: Logo at {logo_path} not found, skipping logo.")
     
     header_style = ParagraphStyle(
         name='Header',
@@ -47,11 +50,12 @@ def generate_solicitation_pdf(solicitation_data):
     elements.append(Spacer(1, 12))  # Adicionar espaço
 
     # Tabela de Itens da Solicitação
-    table_data = [["Produto", "Quantidade", "Lote", "Data Fabricação", "Data Validade"]]
-    for item in solicitation_data['itens']:
+    table_data = [["Produto", "Quantidade", "Quantidade Separada", "Lote", "Data Fabricação", "Data Validade"]]
+    for item in solicitation_data['items']:
         table_data.append([
             item['produto_descricao'],
             item['quantidade'],
+            item['quantidade_separada'],
             item.get('lote', '-'),
             item.get('data_fab', '-'),
             item.get('data_vlt', '-')

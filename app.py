@@ -4,7 +4,7 @@ from reports.production_report import generate_pdf
 from reports.solicitation_report import generate_solicitation_pdf
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Permitir CORS para o frontend
+CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir CORS para todas as origens
 
 @app.route('/report/pdf', methods=['POST'])
 def generate_report():
