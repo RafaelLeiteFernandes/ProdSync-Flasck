@@ -100,13 +100,14 @@ def generate_solicitation_pdf(solicitation_data):
         # Tabela para os itens da solicitação
         elements.append(Paragraph("Lista de Produtos", subtitle_style))
         elements.append(Spacer(1, 12))
-        table_data = [["Código", "Produto / Descrição", "Quantidade"]]
+        table_data = [["Código", "Produto / Descrição", "Quantidade", "Quantidade Separada"]]
 
         for item in solicitation_data['items']:
             row = [
                 item['codpro'],
                 item['produto_descricao'],
-                item['quantidade']
+                item['quantidade'],
+                item['quantidade_separada']
             ]
             table_data.append(row)
 
