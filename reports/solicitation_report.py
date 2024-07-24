@@ -103,12 +103,13 @@ def generate_solicitation_pdf(solicitation_data):
         table_data = [["Código", "Produto / Descrição", "Quantidade"]]
 
         for item in solicitation_data['items']:
-            row = [
-                item['codpro'],
-                item['produto_descricao'],
-                item['quantidade']
-            ]
-            table_data.append(row)
+            if item['quantidade_separada'] != 0:
+                row = [
+                    item['codpro'],
+                    item['produto_descricao'],
+                    item['quantidade']
+                ]
+                table_data.append(row)
 
         table_style = TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
