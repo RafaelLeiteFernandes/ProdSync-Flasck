@@ -57,16 +57,19 @@ def generate_solicitation_pdf(solicitation_data):
 
     def add_solicitation_section(elements):
         # Cabeçalho com logo e título em um quadrado
+        logo_path = "reports/static/werner.png"  # Caminho para a imagem do logo
         header_data = [
             [
-                Image("reports/static/werner.png", width=80, height=30),
+                Image(logo_path, width=80, height=30),
                 Paragraph("Requisição de Retirada", title_style)
             ]
         ]
-        header_table = Table(header_data, colWidths=[60, 440])
+        header_table = Table(header_data, colWidths=[70, 440])
         header_table.setStyle(TableStyle([
             ('BOX', (0, 0), (-1, -1), 1, colors.black),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('LEFTPADDING', (0, 0), (0, 0), 25)  # Adiciona padding à esquerda da imagem
         ]))
         elements.append(header_table)
         elements.append(Spacer(1, 12))
@@ -88,10 +91,11 @@ def generate_solicitation_pdf(solicitation_data):
             [data_elements[0], data_elements[1]],
             [data_elements[2], data_elements[3]],
             [data_elements[4], data_elements[5]],
-            [data_elements[6]]
+            [data_elements[6], '']
         ], colWidths=[250, 250])
         data_table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP')
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT')
         ]))
         
         elements.append(data_table)
@@ -100,7 +104,7 @@ def generate_solicitation_pdf(solicitation_data):
         # Tabela para os itens da solicitação
         elements.append(Paragraph("Lista de Produtos", subtitle_style))
         elements.append(Spacer(1, 12))
-        table_data = [["Código", "Produto / Descrição", "Quantidade", "Quantidade Separada"]]
+        table_data = [["Código", "Produto / Descrição", "Quantidade", "Separado", ]]
 
         for item in solicitation_data['items']:
             row = [
@@ -121,7 +125,7 @@ def generate_solicitation_pdf(solicitation_data):
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ])
 
-        table = Table(table_data, style=table_style, colWidths=[100, 300, 100])
+        table = Table(table_data, style=table_style, colWidths=[80, 300, 80, 80])
         elements.append(table)
 
         # Espaçamento para a próxima seção
