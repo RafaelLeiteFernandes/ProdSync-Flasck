@@ -81,12 +81,14 @@ def generate_solicitation_pdf(solicitation_data):
             Paragraph(f"Destino: {solicitation_data.get('destino_nome', '')}", normal_style),
             Paragraph(f"Observação: {solicitation_data.get('observacao', '')}", normal_style),
             Paragraph(f"Status: {solicitation_data.get('status', '')}", normal_style),
+            Paragraph(f"Data da Solicitação: {solicitation_data.get('data_solicitacao', '')}", normal_style),
         ]
         
         data_table = Table([
             [data_elements[0], data_elements[1]],
             [data_elements[2], data_elements[3]],
-            [data_elements[4], data_elements[5]]
+            [data_elements[4], data_elements[5]],
+            [data_elements[6]]
         ], colWidths=[250, 250])
         data_table.setStyle(TableStyle([
             ('VALIGN', (0, 0), (-1, -1), 'TOP')
@@ -124,10 +126,8 @@ def generate_solicitation_pdf(solicitation_data):
         # Espaçamento para a próxima seção
         elements.append(Spacer(1, 48))
 
-    # Adicionar duas seções duplicadas para a folha A4
+    # Adicionar apenas uma seção
     add_solicitation_section(elements)
-    add_solicitation_section(elements)
-
 
     doc.build(elements)
     buffer.seek(0)
