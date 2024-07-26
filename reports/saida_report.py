@@ -4,7 +4,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 import io
 
-def generate_solicitation_pdf(solicitation_data):
+def generate_saida_pdf(solicitation_data):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -12,25 +12,28 @@ def generate_solicitation_pdf(solicitation_data):
         leftMargin=20,
         rightMargin=20,
         topMargin=20,
-        bottomMargin=20
+        bottomMargin=20,
+        title="Relatório de Saída",
+        author="Werner Alimentos",
+        subject="Relatório de Saída",
+        keywords="saída, relatório, empresa"
     )
 
     elements = []
 
-    # Estilos
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
         name='TitleStyle',
         parent=styles['Heading1'],
         fontSize=16,
-        alignment=1,  # Center
+        alignment=1,
         spaceAfter=12
     )
     subtitle_style = ParagraphStyle(
         name='SubtitleStyle',
         parent=styles['Heading2'],
         fontSize=14,
-        alignment=1,  # Center
+        alignment=1,
         spaceAfter=12
     )
     h2_style = ParagraphStyle(
@@ -51,17 +54,16 @@ def generate_solicitation_pdf(solicitation_data):
         name='Footer',
         fontSize=10,
         leading=12,
-        alignment=1,  # Center
+        alignment=1,
         spaceBefore=20,
     )
 
     def add_solicitation_section(elements):
-        # Cabeçalho com logo e título em um quadrado
-        logo_path = "reports/static/werner.png"  # Caminho para a imagem do logo
+        logo_path = "reports/static/werner.png"
         header_data = [
             [
                 Image(logo_path, width=80, height=30),
-                Paragraph("Requisição de Retirada", title_style)
+                Paragraph("Relatório de Saída", title_style)
             ]
         ]
         header_table = Table(header_data, colWidths=[70, 440])
@@ -69,12 +71,11 @@ def generate_solicitation_pdf(solicitation_data):
             ('BOX', (0, 0), (-1, -1), 1, colors.black),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('LEFTPADDING', (0, 0), (0, 0), 25)  # Adiciona padding à esquerda da imagem
+            ('LEFTPADDING', (0, 0), (0, 0), 25)
         ]))
         elements.append(header_table)
         elements.append(Spacer(1, 12))
 
-        # Dados da Solicitação
         elements.append(Paragraph("Dados da Solicitação", subtitle_style))
         
         data_elements = [
@@ -101,17 +102,18 @@ def generate_solicitation_pdf(solicitation_data):
         elements.append(data_table)
         elements.append(Spacer(1, 12))
 
-        # Tabela para os itens da solicitação
         elements.append(Paragraph("Lista de Produtos", subtitle_style))
         elements.append(Spacer(1, 12))
-        table_data = [["Código", "Produto / Descrição", "Quantidade", "Separado", ]]
+        table_data = [["Código", "Produto / Descrição", "Qtd.", "Lote", "Data Venc.", "Data Fab."]]
 
         for item in solicitation_data['items']:
             row = [
                 item['codpro'],
-                item['produto_descricao'],
+                Paragraph(item['produto_descricao'], normal_style),
                 item['quantidade'],
-                item['quantidade_separada']
+                item.get('lote', ''),
+                item.get('data_vlt', ''),
+                item.get('data_fab', '')
             ]
             table_data.append(row)
 
@@ -125,13 +127,10 @@ def generate_solicitation_pdf(solicitation_data):
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ])
 
-        table = Table(table_data, style=table_style, colWidths=[80, 300, 80, 80])
+        table = Table(table_data, style=table_style, colWidths=[60, 180, 50, 50, 60, 60])
         elements.append(table)
-
-        # Espaçamento para a próxima seção
         elements.append(Spacer(1, 48))
 
-    # Adicionar apenas uma seção
     add_solicitation_section(elements)
 
     doc.build(elements)
