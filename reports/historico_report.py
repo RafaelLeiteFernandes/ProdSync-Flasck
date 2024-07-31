@@ -63,7 +63,7 @@ def generate_historico_pdf(solicitation_data):
         header_data = [
             [
                 Image(logo_path, width=80, height=30),
-                Paragraph("Histórico de Solicitações", title_style)
+                Paragraph("Solicitação de Retirada", title_style)
             ]
         ]
         header_table = Table(header_data, colWidths=[70, 440])
