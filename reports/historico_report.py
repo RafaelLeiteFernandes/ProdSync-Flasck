@@ -104,18 +104,42 @@ def generate_historico_pdf(solicitation_data):
 
         elements.append(Paragraph("Lista de Produtos", subtitle_style))
         elements.append(Spacer(1, 12))
-        table_data = [["Código", "Produto / Descrição", "Qtd.", "Separado", "Lote", "Data Venc.", "Data Fab."]]
+
+        # Condicional para exibir ou não as colunas "Separado", "Lote", "Data Venc.", "Data Fab."
+        show_columns = {
+            "Separado": any(item['quantidade_separada'] != 0 for item in solicitation_data['items']),
+            "Lote": any(item.get('lote') is not None for item in solicitation_data['items']),
+            "Data Venc.": any(item.get('data_vlt') is not None for item in solicitation_data['items']),
+            "Data Fab.": any(item.get('data_fab') is not None for item in solicitation_data['items']),
+        }
+
+        headers = ["Código", "Produto / Descrição", "Qtd."]
+        if show_columns["Separado"]:
+            headers.append("Separado")
+        if show_columns["Lote"]:
+            headers.append("Lote")
+        if show_columns["Data Venc."]:
+            headers.append("Data Venc.")
+        if show_columns["Data Fab."]:
+            headers.append("Data Fab.")
+
+        table_data = [headers]
 
         for item in solicitation_data['items']:
             row = [
                 item['codpro'],
                 Paragraph(item['produto_descricao'], normal_style),
                 item['quantidade'],
-                item['quantidade_separada'],
-                item.get('lote', ''),
-                item.get('data_vlt', ''),
-                item.get('data_fab', '')
             ]
+            if show_columns["Separado"]:
+                row.append(item['quantidade_separada'])
+            if show_columns["Lote"]:
+                row.append(item.get('lote', ''))
+            if show_columns["Data Venc."]:
+                row.append(item.get('data_vlt', ''))
+            if show_columns["Data Fab."]:
+                row.append(item.get('data_fab', ''))
+
             table_data.append(row)
 
         table_style = TableStyle([
@@ -128,7 +152,17 @@ def generate_historico_pdf(solicitation_data):
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ])
 
-        table = Table(table_data, style=table_style, colWidths=[60, 180, 50, 50, 50, 60, 60])
+        col_widths = [60, 180, 50]
+        if show_columns["Separado"]:
+            col_widths.append(50)
+        if show_columns["Lote"]:
+            col_widths.append(50)
+        if show_columns["Data Venc."]:
+            col_widths.append(60)
+        if show_columns["Data Fab."]:
+            col_widths.append(60)
+
+        table = Table(table_data, style=table_style, colWidths=col_widths)
         elements.append(table)
         elements.append(Spacer(1, 48))
 
