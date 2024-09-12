@@ -150,17 +150,11 @@ def generate_historico_pdf(solicitation_data):
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
             ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('WORDWRAP', (1, 0), (-1, -1), 'CJK'),  # Enable word wrapping
         ])
 
-        col_widths = [60, 180, 50]
-        if show_columns["Separado"]:
-            col_widths.append(50)
-        if show_columns["Lote"]:
-            col_widths.append(50)
-        if show_columns["Data Venc."]:
-            col_widths.append(60)
-        if show_columns["Data Fab."]:
-            col_widths.append(60)
+        # Setting auto width for columns except the first one which is fixed
+        col_widths = [60] + ['*' for _ in range(len(headers) - 1)]
 
         table = Table(table_data, style=table_style, colWidths=col_widths)
         elements.append(table)
